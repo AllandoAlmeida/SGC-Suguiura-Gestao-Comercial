@@ -1,0 +1,99 @@
+// SGC - Suguiura Gestao Comercial
+// Modelagem do CRM de televendas
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  SDR
+  CLOSER
+  ADMIN
+}
+
+enum LeadSource {
+  WHATSAPP
+  LOJA
+  EMAIL
+  PROSPECCAO
+}
+
+enum LeadStatus {
+  NOVO
+  QUALIFICADO
+  ORCAMENTO
+  NEGOCIACAO
+  FECHADO
+  PERDIDO
+}
+
+enum InteractionType {
+  MENSAGEM       // registro de mensagem
+  LIGACAO        // registro de ligacao
+  NOTA           // anotacao livre
+  MUDANCA_STATUS // alteracao de status (historico automatico)
+}
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         Role     @default(SDR)
+  active       Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  leads        Lead[]        @relation("LeadOwner")
+  interactions Interaction[]
+}
+
+model Lead {
+  id             String     @id @default(cuid())
+  name           String
+  phone          String
+  source         LeadSource
+  product        String
+  estimatedValue Decimal    @default(0) @db.Decimal(12, 2)
+  status         LeadStatus @default(NOVO)
+
+  ownerId        String
+  owner          User       @relation("LeadOwner", fields: [ownerId], references: [id])
+
+  entryDate      DateTime   @default(now())
+  lastContact    DateTime?
+  nextFollowUp   DateTime // follow-up obrigatorio (regra de negocio)
+  notes          String?
+
+  inactive       Boolean    @default(false)
+
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+
+  interactions   Interaction[]
+
+  @@index([status])
+  @@index([ownerId])
+  @@index([nextFollowUp])
+}
+
+model Interaction {
+  id        String          @id @default(cuid())
+  leadId    String
+  lead      Lead            @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User            @relation(fields: [userId], references: [id])
+  type      InteractionType
+  content   String
+  // Para MUDANCA_STATUS: registra de->para
+  fromStatus LeadStatus?
+  toStatus   LeadStatus?
+  createdAt DateTime        @default(now())
+
+  @@index([leadId])
+}

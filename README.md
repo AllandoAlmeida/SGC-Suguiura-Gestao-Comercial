@@ -175,3 +175,85 @@ O sistema é baseado no método de vendas:
 # 🔥 Regra de Ouro
 
 > Se não está no sistema, não existe comercialmente.
+
+---
+
+# 🛠️ Stack Técnica
+
+- **Next.js 14** (App Router) + **React 18** + **TypeScript**
+- **Tailwind CSS** (tema dashboard moderno, cores por status)
+- **Prisma ORM** + **PostgreSQL**
+- **NextAuth** (login por credenciais, sessão JWT) com papéis SDR / Closer / Admin
+- **@dnd-kit** (drag-and-drop do Kanban) e **Recharts** (gráficos do dashboard)
+
+---
+
+# ▶️ Como Rodar (desenvolvimento)
+
+### Pré-requisitos
+- Node.js 18+ e npm
+- Docker (para o PostgreSQL) — ou um PostgreSQL local
+
+### 1. Instalar dependências
+```bash
+npm install
+```
+
+### 2. Subir o banco PostgreSQL
+Com Docker (recomendado):
+```bash
+docker compose up -d
+```
+> Isso sobe um Postgres em `localhost:5432` (usuário `sgc`, senha `sgc`, banco `sgc`).
+> Se preferir usar um Postgres próprio, ajuste `DATABASE_URL` no arquivo `.env`.
+
+### 3. Configurar variáveis de ambiente
+O arquivo `.env` já vem preenchido para desenvolvimento. Para referência, veja `.env.example`.
+Em produção, gere um `NEXTAUTH_SECRET` forte.
+
+### 4. Criar as tabelas e popular dados de exemplo
+```bash
+npm run setup
+```
+> Executa a migration inicial e o seed. Cria 3 usuários e 8 leads de exemplo.
+
+### 5. Iniciar o servidor
+```bash
+npm run dev
+```
+Acesse **http://localhost:3000**
+
+---
+
+## 👤 Usuários de teste (senha: `123456`)
+
+| E-mail | Papel | Permissões |
+|--------|-------|------------|
+| `admin@sgc.com` | Admin | Tudo |
+| `sdr@sgc.com` | SDR | Cria leads e edita até "Qualificado" (não fecha venda) |
+| `closer@sgc.com` | Closer | Negocia e fecha leads qualificados |
+
+---
+
+## 📜 Scripts úteis
+
+| Comando | Descrição |
+|---------|-----------|
+| `npm run dev` | Servidor de desenvolvimento |
+| `npm run build` | Build de produção |
+| `npm run setup` | Migration inicial + seed |
+| `npm run db:seed` | Repopula dados de exemplo |
+| `npm run db:studio` | Abre o Prisma Studio (UI do banco) |
+| `npm run lint` | Lint do projeto |
+
+---
+
+## ✅ Regras de negócio implementadas
+
+- **Follow-up obrigatório**: não é possível salvar um lead sem `próximo follow-up` (validado no formulário e no banco).
+- **Sem orçamento sem diagnóstico**: não se avança de "Novo" direto para "Orçamento/Negociação/Fechado" — é preciso passar por "Qualificado".
+- **SDR não fecha venda**: papel SDR é bloqueado de mover leads além de "Qualificado"; apenas Closer/Admin fecham.
+- **Todo lead tem responsável**: campo obrigatório.
+- **Histórico automático**: toda mudança de status e cada mensagem/ligação é registrada no histórico do lead.
+- **Leads inativos**: sinalizados automaticamente após `LEAD_INACTIVE_DAYS` (padrão 7) dias sem contato.
+- **Alertas de follow-up atrasado**: exibidos no dashboard e na página de Follow-ups.
