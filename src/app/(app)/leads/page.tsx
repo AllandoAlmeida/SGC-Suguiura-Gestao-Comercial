@@ -90,11 +90,11 @@ export default function LeadsPage() {
               <th className="px-4 py-3">Cliente</th>
               <th className="px-4 py-3">Origem</th>
               <th className="px-4 py-3">Produto</th>
-              <th className="px-4 py-3 text-right">Valor</th>
+              <th className="px-4 py-3 text-center">Valor</th>
               <th className="px-4 py-3">Status</th>
               <th className="px-4 py-3">Responsavel</th>
               <th className="px-4 py-3">Follow-up</th>
-              <th className="px-4 py-3 text-right">Acoes</th>
+              <th className="px-4 py-3 text-centr">Acões</th>
             </tr>
           </thead>
           <tbody>
@@ -108,13 +108,13 @@ export default function LeadsPage() {
                 </td>
                 <td className="px-4 py-3 text-slate-600">{SOURCE_LABEL[lead.source]}</td>
                 <td className="px-4 py-3 text-slate-600">{lead.product}</td>
-                <td className="px-4 py-3 text-right font-medium">{formatCurrency(lead.estimatedValue)}</td>
+                <td className="px-4 py-3 text-center font-medium">{formatCurrency(lead.estimatedValue)}</td>
                 <td className="px-4 py-3"><StatusBadge status={lead.status} /></td>
                 <td className="px-4 py-3 text-slate-600">{lead.owner?.name ?? "-"}</td>
                 <td className={`px-4 py-3 ${isOverdue(lead.nextFollowUp) && !["FECHADO","PERDIDO"].includes(lead.status) ? "text-red-600 font-medium" : "text-slate-600"}`}>
                   {formatDate(lead.nextFollowUp)}
                 </td>
-                <td className="px-4 py-3 text-right whitespace-nowrap">
+                <td className="px-4 py-3 text-center whitespace-nowrap">
                   <button onClick={() => { setEditing(lead); setShowForm(true); }} className="text-brand-600 hover:underline mr-3">
                     Editar
                   </button>

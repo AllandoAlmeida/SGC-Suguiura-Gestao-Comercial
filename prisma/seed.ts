@@ -1,7 +1,15 @@
+import "dotenv/config";
 import { PrismaClient, Role, LeadSource, LeadStatus, InteractionType } from "@prisma/client";
+import { PrismaPg } from "@prisma/adapter-pg";
 import bcrypt from "bcryptjs";
 
-const prisma = new PrismaClient();
+const adapter = new PrismaPg({
+  connectionString: process.env.DATABASE_URL!,
+});
+
+const prisma = new PrismaClient({
+  adapter,
+});
 
 function daysFromNow(days: number): Date {
   const d = new Date();
@@ -22,10 +30,10 @@ async function main() {
     data: { name: "Administrador", email: "admin@sgc.com", passwordHash, role: Role.ADMIN },
   });
   const sdr = await prisma.user.create({
-    data: { name: "Ana SDR", email: "sdr@sgc.com", passwordHash, role: Role.SDR },
+    data: { name: "Jessica", email: "sdr@sgc.com", passwordHash, role: Role.SDR },
   });
   const closer = await prisma.user.create({
-    data: { name: "Carlos Closer", email: "closer@sgc.com", passwordHash, role: Role.CLOSER },
+    data: { name: "Shirley", email: "closer@sgc.com", passwordHash, role: Role.CLOSER },
   });
 
   console.log("Seed: criando leads de exemplo...");
