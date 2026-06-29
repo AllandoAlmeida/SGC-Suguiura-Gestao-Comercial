@@ -43,49 +43,7 @@ async function main() {
       product: "Plano Premium", estimatedValue: 2500, status: LeadStatus.NOVO,
       ownerId: sdr.id, nextFollowUp: daysFromNow(1), lastContact: daysFromNow(0),
       notes: "Cliente veio pelo anuncio do Instagram.",
-    },
-    {
-      name: "Maria Oliveira", phone: "(11) 97777-2222", source: LeadSource.LOJA,
-      product: "Kit Inicial", estimatedValue: 800, status: LeadStatus.QUALIFICADO,
-      ownerId: sdr.id, nextFollowUp: daysFromNow(2), lastContact: daysFromNow(-1),
-      notes: "Diagnostico feito, interessada no plano anual.",
-    },
-    {
-      name: "Pedro Santos", phone: "(21) 96666-3333", source: LeadSource.EMAIL,
-      product: "Consultoria", estimatedValue: 5000, status: LeadStatus.ORCAMENTO,
-      ownerId: closer.id, nextFollowUp: daysFromNow(0), lastContact: daysFromNow(-2),
-      notes: "Aguardando aprovacao do orcamento.",
-    },
-    {
-      name: "Lucia Ferreira", phone: "(31) 95555-4444", source: LeadSource.PROSPECCAO,
-      product: "Plano Empresarial", estimatedValue: 12000, status: LeadStatus.NEGOCIACAO,
-      ownerId: closer.id, nextFollowUp: daysFromNow(-2), lastContact: daysFromNow(-5),
-      notes: "Negociando desconto para fechamento em 12x.",
-    },
-    {
-      name: "Roberto Lima", phone: "(41) 94444-5555", source: LeadSource.WHATSAPP,
-      product: "Plano Premium", estimatedValue: 2500, status: LeadStatus.FECHADO,
-      ownerId: closer.id, nextFollowUp: daysFromNow(30), lastContact: daysFromNow(-1),
-      notes: "Venda fechada! Pos-venda agendado.",
-    },
-    {
-      name: "Fernanda Costa", phone: "(51) 93333-6666", source: LeadSource.LOJA,
-      product: "Kit Inicial", estimatedValue: 800, status: LeadStatus.PERDIDO,
-      ownerId: sdr.id, nextFollowUp: daysFromNow(60), lastContact: daysFromNow(-10),
-      notes: "Comprou de concorrente. Tentar recuperar em 2 meses.",
-    },
-    {
-      name: "Marcos Souza", phone: "(11) 92222-7777", source: LeadSource.PROSPECCAO,
-      product: "Consultoria", estimatedValue: 5000, status: LeadStatus.NEGOCIACAO,
-      ownerId: closer.id, nextFollowUp: daysFromNow(0), lastContact: daysFromNow(-3),
-      notes: "Decisor final responde amanha.",
-    },
-    {
-      name: "Juliana Alves", phone: "(11) 91111-8888", source: LeadSource.WHATSAPP,
-      product: "Plano Premium", estimatedValue: 2500, status: LeadStatus.NOVO,
-      ownerId: sdr.id, nextFollowUp: daysFromNow(3), lastContact: null,
-      notes: "Primeiro contato pendente.",
-    },
+    },    
   ];
 
   for (const data of leadsData) {
