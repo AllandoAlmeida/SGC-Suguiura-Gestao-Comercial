@@ -1,7 +1,7 @@
 // Tipos compartilhados no client (espelham o retorno serializado da API)
 
 export type Role = "SDR" | "CLOSER" | "ADMIN";
-export type LeadSource = "WHATSAPP" | "LOJA" | "EMAIL" | "PROSPECCAO";
+export type LeadSource = "WHATSAPP" | "LOJA" | "EMAIL" | "PROSPECCAO" | "POS_VENDA";
 export type LeadStatus = "NOVO" | "QUALIFICADO" | "ORCAMENTO" | "NEGOCIACAO" | "FECHADO" | "PERDIDO";
 export type InteractionType = "MENSAGEM" | "LIGACAO" | "NOTA" | "MUDANCA_STATUS";
 

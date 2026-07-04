@@ -3,7 +3,7 @@ import { z } from "zod";
 export const leadCreateSchema = z.object({
   name: z.string().min(2, "Nome obrigatorio"),
   phone: z.string().min(8, "Telefone obrigatorio"),
-  source: z.enum(["WHATSAPP", "LOJA", "EMAIL", "PROSPECCAO"]),
+  source: z.enum(["WHATSAPP", "LOJA", "EMAIL", "PROSPECCAO", "POS_VENDA"]),
   product: z.string().min(1, "Produto obrigatorio"),
   estimatedValue: z.coerce.number().min(0, "Valor invalido"),
   status: z.enum(["NOVO", "QUALIFICADO", "ORCAMENTO", "NEGOCIACAO", "FECHADO", "PERDIDO"]).optional(),

@@ -20,7 +20,7 @@ interface Props {
   onSaved: () => void;
 }
 
-const SOURCES: LeadSource[] = ["WHATSAPP", "LOJA", "EMAIL", "PROSPECCAO"];
+const SOURCES: LeadSource[] = ["WHATSAPP", "LOJA", "EMAIL", "PROSPECCAO","POS_VENDA"];
 
 export default function LeadForm({ lead, users, onClose, onSaved }: Props) {
   const { data: session } = useSession();
