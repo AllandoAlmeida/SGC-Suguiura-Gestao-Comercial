@@ -35,6 +35,7 @@ export const SOURCE_LABEL: Record<string, string> = {
   LOJA: "Loja",
   EMAIL: "E-mail",
   PROSPECCAO: "Prospeccao",
+  POS_VENDA: "Pós-venda",
 };
 
 export const ROLE_LABEL: Record<Role, string> = {

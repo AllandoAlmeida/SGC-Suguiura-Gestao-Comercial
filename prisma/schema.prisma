@@ -17,9 +17,11 @@ enum Role {
 
 enum LeadSource {
   WHATSAPP
+  SMBOT
   LOJA
   EMAIL
   PROSPECCAO
+  POS_VENDA
 }
 
 enum LeadStatus {
