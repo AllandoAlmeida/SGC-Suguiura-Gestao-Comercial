@@ -88,7 +88,7 @@ export default function LeadsPage() {
           <thead className="bg-slate-50 text-slate-500 text-left">
             <tr>
               <th className="px-4 py-3">Cliente</th>
-              <th className="px-4 py-3">Origem</th>
+              <th className="px-4 py-3">Canal</th>
               <th className="px-4 py-3">Produto</th>
               <th className="px-4 py-3 text-center">Valor</th>
               <th className="px-4 py-3">Status</th>
@@ -114,7 +114,7 @@ export default function LeadsPage() {
                 <td className={`px-4 py-3 ${isOverdue(lead.nextFollowUp) && !["FECHADO","PERDIDO"].includes(lead.status) ? "text-red-600 font-medium" : "text-slate-600"}`}>
                   {formatDate(lead.nextFollowUp)}
                 </td>
-                <td className="px-4 py-3 text-center whitespace-nowrap">
+                <td className="px-4 py-3 text-left whitespace-nowrap">
                   <button onClick={() => { setEditing(lead); setShowForm(true); }} className="text-brand-600 hover:underline mr-3">
                     Editar
                   </button>
