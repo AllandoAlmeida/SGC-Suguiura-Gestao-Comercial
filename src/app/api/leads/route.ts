@@ -3,15 +3,17 @@ import { LeadStatus, LeadSource, Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { requireUser, handleError, ApiError, serializeLead } from "@/lib/api";
 import { leadCreateSchema } from "@/lib/validation";
-import { canEditLeadStatus, inactiveThresholdDays } from "@/lib/domain";
+import { canEditLeadStatus, isValidStatusTransition, inactiveThresholdDays } from "@/lib/domain";
+import { buildLeadWhere } from "@/lib/reportFilters";
 
 // GET /api/leads?status=&ownerId=&source=&from=&to=&search=&overdue=
 export async function GET(req: NextRequest) {
   try {
     await requireUser();
+    const where = buildLeadWhere(req.nextUrl.searchParams);
     const sp = req.nextUrl.searchParams;
 
-    const where: Prisma.LeadWhereInput = {};
+    //const where: Prisma.LeadWhereInput = {};
     const status = sp.get("status");
     const ownerId = sp.get("ownerId");
     const source = sp.get("source");
@@ -82,6 +84,13 @@ export async function POST(req: NextRequest) {
     // Regra: papel deve poder definir o status escolhido.
     const perm = canEditLeadStatus(user.role, status);
     if (!perm.ok) throw new ApiError(403, perm.reason!);
+
+    // Regra: nao permitir orcamento sem diagnostico tambem na criacao.
+    // Toda criacao e tratada como uma transicao implicita a partir de "Novo",
+    // entao nao e possivel criar um lead ja em Orcamento/Negociacao/Fechado
+    // sem ele ter passado por Qualificado antes.
+    const transition = isValidStatusTransition("NOVO", status);
+    if (!transition.ok) throw new ApiError(422, transition.reason!);
 
     const lead = await prisma.lead.create({
       data: {

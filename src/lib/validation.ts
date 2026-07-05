@@ -7,7 +7,7 @@ export const leadCreateSchema = z.object({
   product: z.string().min(1, "Produto obrigatorio"),
   estimatedValue: z.coerce.number().min(0, "Valor invalido"),
   status: z.enum(["NOVO", "QUALIFICADO", "ORCAMENTO", "NEGOCIACAO", "FECHADO", "PERDIDO"]).optional(),
-  ownerId: z.string().min(1, "Responsavel obrigatorio"),
+  ownerId: z.string().min(1, "Responsável obrigatório"),
   // Follow-up obrigatorio (regra de negocio): bloqueia salvar sem follow-up.
   nextFollowUp: z.coerce.date({ required_error: "Proximo follow-up e obrigatorio" }),
   lastContact: z.coerce.date().optional().nullable(),
@@ -26,8 +26,22 @@ export const statusUpdateSchema = z.object({
 
 export const interactionCreateSchema = z.object({
   type: z.enum(["MENSAGEM", "LIGACAO", "NOTA"]),
-  content: z.string().min(1, "Conteudo obrigatorio"),
+  content: z.string().min(1, "Conteúdo obrigatório"),
 });
+
+// Registro de usuario (auto-cadastro). Papel nunca vem do client — ver rota de registro.
+export const registerSchema = z
+  .object({
+    name: z.string().min(2, "Nome obrigatorio"),
+    email: z.string().email("E-mail invalido"),
+    password: z.string().min(8, "A senha deve ter pelo menos 8 caracteres"),
+    confirmPassword: z.string().min(1, "Confirme a senha"),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "As senhas nao coincidem",
+    path: ["confirmPassword"],
+  });
 
 export type LeadCreateInput = z.infer<typeof leadCreateSchema>;
 export type LeadUpdateInput = z.infer<typeof leadUpdateSchema>;
+export type RegisterInput = z.infer<typeof registerSchema>;
