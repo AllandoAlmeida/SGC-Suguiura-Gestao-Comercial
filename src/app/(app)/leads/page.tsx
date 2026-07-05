@@ -23,6 +23,16 @@ export default function LeadsPage() {
   const [editing, setEditing] = useState<Lead | null>(null);
   const [error, setError] = useState("");
 
+  // Mesma logica de filtros usada no load(), reaproveitada para os links de exportacao
+  // — assim o relatorio baixado bate exatamente com o que esta na tela.
+  function buildFilterParams() {
+    const params = new URLSearchParams();
+    if (search) params.set("search", search);
+    if (statusFilter) params.set("status", statusFilter);
+    if (sourceFilter) params.set("source", sourceFilter);
+    return params;
+  }
+  
   async function load() {
     const params = new URLSearchParams();
     if (search) params.set("search", search);
@@ -55,12 +65,27 @@ export default function LeadsPage() {
   return (
     <div className="p-6 lg:p-8">
       <PageHeader
-        title="Gestao de Leads"
+        title="Gestão de Leads"
         subtitle={`${leads.length} lead(s) encontrado(s)`}
         action={
-          <button onClick={() => { setEditing(null); setShowForm(true); }} className="px-4 py-2 rounded-lg bg-brand-600 text-white hover:bg-brand-700 text-sm">
+          <div>
+            <a
+              href={`/api/leads/report/pdf?${buildFilterParams().toString()}`}
+              className="px-3 py-2 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-50 text-sm"
+            >
+              Exportar PDF
+            </a>
+            <a
+              href={`/api/leads/report/csv?${buildFilterParams().toString()}`}
+              className="px-3 py-2 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-50 text-sm"
+            >
+              Exportar CSV
+            </a>
+            <button onClick={() => { setEditing(null); setShowForm(true); }} className="px-4 py-2 rounded-lg bg-brand-600 text-white hover:bg-brand-700 text-sm">
             + Novo lead
           </button>
+          </div>
+          
         }
       />
 
@@ -92,9 +117,9 @@ export default function LeadsPage() {
               <th className="px-4 py-3">Produto</th>
               <th className="px-4 py-3 text-center">Valor</th>
               <th className="px-4 py-3">Status</th>
-              <th className="px-4 py-3">Responsavel</th>
+              <th className="px-4 py-3">Responsável</th>
               <th className="px-4 py-3">Follow-up</th>
-              <th className="px-4 py-3 text-centr">Acões</th>
+              <th className="px-4 py-3 text-centr">Ações</th>
             </tr>
           </thead>
           <tbody>
