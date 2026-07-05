@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -35,7 +36,7 @@ export default function LoginPage() {
       <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8">
         <div className="text-center mb-6">
           <h1 className="text-2xl font-bold text-slate-900">SGC</h1>
-          <p className="text-sm text-slate-500">Suguiura Gestao Comercial</p>
+          <p className="text-sm text-slate-500">Suguiura Gestão Comercial</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -48,6 +49,7 @@ export default function LoginPage() {
               required
               className="w-full rounded-lg border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-500"
               placeholder="seu@email.com"
+              autoComplete="email"
             />
           </div>
           <div>
@@ -72,13 +74,20 @@ export default function LoginPage() {
             {loading ? "Entrando..." : "Entrar"}
           </button>
         </form>
-
         <div className="mt-6 border-t pt-4">
           <p className="text-xs text-slate-400 mb-2 text-center">Acesso rapido (demo - senha 123456):</p>
           <div className="flex gap-2 justify-center flex-wrap">
             <button onClick={() => quickFill("admin@sgc.com")} className="text-xs px-2 py-1 rounded bg-slate-100 hover:bg-slate-200">admin</button>
             <button onClick={() => quickFill("sdr@sgc.com")} className="text-xs px-2 py-1 rounded bg-slate-100 hover:bg-slate-200">sdr</button>
             <button onClick={() => quickFill("closer@sgc.com")} className="text-xs px-2 py-1 rounded bg-slate-100 hover:bg-slate-200">closer</button>
+          </div>
+          <div className="flex gap-2 justify-center flex-wrap">
+            <p className="mt-6 text-center text-sm text-slate-500">
+          Ainda nao tem conta?{" "}
+          <Link href="/register" className="text-brand-600 hover:underline font-medium">
+            Criar conta
+          </Link>
+        </p>
           </div>
         </div>
       </div>
