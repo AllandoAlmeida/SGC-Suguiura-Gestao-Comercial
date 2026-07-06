@@ -110,226 +110,231 @@ export default function LeadsPage() {
   }
 
   return (
-    <div className="p-6 lg:p-8">
-      <PageHeader
-        title="Gestão de Leads"
-        subtitle={`${leads.length} lead(s) encontrado(s)`}
-        action={
-          <div className="flex items-center gap-4">
-            <div>
-              <input
-                type="file"
-                accept=".csv,text/csv"
-                ref={importInputRef}
-                onChange={handleImportFile}
-                className="hidden"
-              />
-              <button
-                onClick={() => importInputRef.current?.click()}
-                disabled={importing}
-                className="px-4 py-2 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-50 text-sm disabled:opacity-60"
-              >
-                {importing ? "Importando..." : "Importar dados"}
-              </button>
-            </div>
-
-            <div className="relative" ref={exportMenuRef}>
-              <button
-                onClick={() => setShowExportMenu((v) => !v)}
-                className="px-4 py-2 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-50 text-sm"
-              >
-                Exportar dados ▾
-              </button>
-              {showExportMenu && (
-                <div className="absolute right-0 mt-2 w-44 bg-white border border-slate-200 rounded-lg shadow-lg z-10 overflow-hidden">
-                  <a
-                    href={`/api/leads/report/pdf?${buildFilterParams().toString()}`}
-                    className="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50"
-                    onClick={() => setShowExportMenu(false)}
-                  >
-                    Exportar PDF
-                  </a>
-                  <a
-                    href={`/api/leads/report/csv?${buildFilterParams().toString()}`}
-                    className="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50"
-                    onClick={() => setShowExportMenu(false)}
-                  >
-                    Exportar CSV
-                  </a>
-                </div>
-              )}
-            </div>
-
-            <button
-              onClick={() => {
-                setEditing(null);
-                setShowForm(true);
-              }}
-              className="px-4 py-2 rounded-lg bg-brand-600 text-white hover:bg-brand-700 text-sm"
-            >
-              + Novo lead
-            </button>
-          </div>
-        }
-      />
-
-      {importResult && (
-        <div
-          className={`mb-4 rounded-lg border p-3 text-sm ${importResult.errors.length ? "border-amber-300 bg-amber-50 text-amber-800" : "border-green-300 bg-green-50 text-green-800"}`}
-        >
-          <p className="font-medium">
-            {importResult.created} lead(s) importado(s)
-            {importResult.errors.length
-              ? `, ${importResult.errors.length} linha(s) com erro`
-              : ""}
-            .
-          </p>
-          {importResult.errors.length > 0 && (
-            <ul className="mt-1 list-disc list-inside text-xs">
-              {importResult.errors.slice(0, 5).map((e, i) => (
-                <li key={i}>
-                  Linha {e.row}: {e.reason}
-                </li>
-              ))}
-              {importResult.errors.length > 5 && (
-                <li>... e mais {importResult.errors.length - 5} erro(s)</li>
-              )}
-            </ul>
-          )}
-        </div>
-      )}
-
-      <div className="flex flex-wrap gap-3 mb-4">
-        <input
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Buscar por nome, telefone ou produto..."
-          className="flex-1 min-w-[220px] rounded-lg border border-slate-300 px-3 py-2 text-sm"
-        />
-        <select
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value)}
-          className="rounded-lg border border-slate-300 px-3 py-2 text-sm"
-        >
-          <option value="">Todos os status</option>
-          {STATUS_ORDER.map((s) => (
-            <option key={s} value={s}>
-              {STATUS_LABEL[s]}
-            </option>
-          ))}
-        </select>
-        <select
-          value={sourceFilter}
-          onChange={(e) => setSourceFilter(e.target.value)}
-          className="rounded-lg border border-slate-300 px-3 py-2 text-sm"
-        >
-          <option value="">Todas as origens</option>
-          {Object.entries(SOURCE_LABEL).map(([k, v]) => (
-            <option key={k} value={k}>
-              {v}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      {error && <p className="text-red-600 mb-3">{error}</p>}
-
-      <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-x-auto">
-        <table className="w-full text-sm">
-          <thead className="bg-slate-50 text-slate-500 text-left">
-            <tr>
-              <th className="px-4 py-3">Cliente</th>
-              <th className="px-4 py-3">Canal</th>
-              <th className="px-4 py-3">Produto</th>
-              <th className="px-4 py-3 text-center">Valor</th>
-              <th className="px-4 py-3">Status</th>
-              <th className="px-4 py-3">Responsável</th>
-              <th className="px-4 py-3">Follow-up</th>
-              <th className="px-4 py-3 text-centr">Ações</th>
-            </tr>
-          </thead>
-          <tbody>
-            {leads.map((lead) => (
-              <tr
-                key={lead.id}
-                className="border-t border-slate-100 hover:bg-slate-50"
-              >
-                <td className="px-4 py-3">
-                  <Link
-                    href={`/leads/${lead.id}`}
-                    className="font-medium text-slate-800 hover:text-brand-600 hover:underline"
-                  >
-                    {lead.name}
-                  </Link>
-                  <div className="text-xs text-slate-400">
-                    {lead.phone}
-                    {lead.inactive ? " · 💤 inativo" : ""}
-                  </div>
-                </td>
-                <td className="px-4 py-3 text-slate-600">
-                  {SOURCE_LABEL[lead.source]}
-                </td>
-                <td className="px-4 py-3 text-slate-600">{lead.product}</td>
-                <td className="px-4 py-3 text-center font-medium">
-                  {formatCurrency(lead.estimatedValue)}
-                </td>
-                <td className="px-4 py-3">
-                  <StatusBadge status={lead.status} />
-                </td>
-                <td className="px-4 py-3 text-slate-600">
-                  {lead.owner?.name ?? "-"}
-                </td>
-                <td
-                  className={`px-4 py-3 ${isOverdue(lead.nextFollowUp) && !["FECHADO", "PERDIDO"].includes(lead.status) ? "text-red-600 font-medium" : "text-slate-600"}`}
+    <div className="h-full flex flex-col p-6 lg:p-8 overflow-hidden">
+      {/* Bloco fixo: título, botões, filtros e avisos — não rola */}
+      <div className="shrink-0">
+        <PageHeader
+          title="Gestão de Leads"
+          subtitle={`${leads.length} lead(s) encontrado(s)`}
+          action={
+            <div className="flex items-center gap-4">
+              <div>
+                <input
+                  type="file"
+                  accept=".csv,text/csv"
+                  ref={importInputRef}
+                  onChange={handleImportFile}
+                  className="hidden"
+                />
+                <button
+                  onClick={() => importInputRef.current?.click()}
+                  disabled={importing}
+                  className="px-4 py-2 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-50 text-sm disabled:opacity-60"
                 >
-                  {formatDate(lead.nextFollowUp)}
-                </td>
-                <td className="px-4 py-3 text-left whitespace-nowrap">
-                  <button
-                    onClick={() => {
-                      setEditing(lead);
-                      setShowForm(true);
-                    }}
-                    className="text-brand-600 hover:underline mr-3"
-                  >
-                    Editar
-                  </button>
-                  {role !== "SDR" && (
-                    <button
-                      onClick={() => handleDelete(lead)}
-                      className="text-red-600 hover:underline"
+                  {importing ? "Importando..." : "Importar dados"}
+                </button>
+              </div>
+
+              <div className="relative" ref={exportMenuRef}>
+                <button
+                  onClick={() => setShowExportMenu((v) => !v)}
+                  className="px-4 py-2 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-50 text-sm"
+                >
+                  Exportar dados ▾
+                </button>
+                {showExportMenu && (
+                  <div className="absolute right-0 mt-2 w-44 bg-white border border-slate-200 rounded-lg shadow-lg z-10 overflow-hidden">
+                    <a
+                      href={`/api/leads/report/pdf?${buildFilterParams().toString()}`}
+                      className="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50"
+                      onClick={() => setShowExportMenu(false)}
                     >
-                      Excluir
-                    </button>
-                  )}
-                </td>
-              </tr>
-            ))}
-            {leads.length === 0 && (
-              <tr>
-                <td
-                  colSpan={8}
-                  className="px-4 py-10 text-center text-slate-400"
-                >
-                  Nenhum lead encontrado.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+                      Exportar PDF
+                    </a>
+                    <a
+                      href={`/api/leads/report/csv?${buildFilterParams().toString()}`}
+                      className="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50"
+                      onClick={() => setShowExportMenu(false)}
+                    >
+                      Exportar CSV
+                    </a>
+                  </div>
+                )}
+              </div>
 
-      {showForm && (
-        <LeadForm
-          lead={editing}
-          users={users}
-          onClose={() => setShowForm(false)}
-          onSaved={() => {
-            setShowForm(false);
-            load();
-          }}
+              <button
+                onClick={() => {
+                  setEditing(null);
+                  setShowForm(true);
+                }}
+                className="px-4 py-2 rounded-lg bg-brand-600 text-white hover:bg-brand-700 text-sm"
+              >
+                + Novo lead
+              </button>
+            </div>
+          }
         />
-      )}
+
+        {importResult && (
+          <div
+            className={`mb-4 rounded-lg border p-3 text-sm ${importResult.errors.length ? "border-amber-300 bg-amber-50 text-amber-800" : "border-green-300 bg-green-50 text-green-800"}`}
+          >
+            <p className="font-medium">
+              {importResult.created} lead(s) importado(s)
+              {importResult.errors.length
+                ? `, ${importResult.errors.length} linha(s) com erro`
+                : ""}
+              .
+            </p>
+            {importResult.errors.length > 0 && (
+              <ul className="mt-1 list-disc list-inside text-xs">
+                {importResult.errors.slice(0, 5).map((e, i) => (
+                  <li key={i}>
+                    Linha {e.row}: {e.reason}
+                  </li>
+                ))}
+                {importResult.errors.length > 5 && (
+                  <li>... e mais {importResult.errors.length - 5} erro(s)</li>
+                )}
+              </ul>
+            )}
+          </div>
+        )}
+
+        <div className="flex flex-wrap gap-3 mb-4">
+          <input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Buscar por nome, telefone ou produto..."
+            className="flex-1 min-w-[220px] rounded-lg border border-slate-300 px-3 py-2 text-sm"
+          />
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="rounded-lg border border-slate-300 px-3 py-2 text-sm"
+          >
+            <option value="">Todos os status</option>
+            {STATUS_ORDER.map((s) => (
+              <option key={s} value={s}>
+                {STATUS_LABEL[s]}
+              </option>
+            ))}
+          </select>
+          <select
+            value={sourceFilter}
+            onChange={(e) => setSourceFilter(e.target.value)}
+            className="rounded-lg border border-slate-300 px-3 py-2 text-sm"
+          >
+            <option value="">Todas as origens</option>
+            {Object.entries(SOURCE_LABEL).map(([k, v]) => (
+              <option key={k} value={k}>
+                {v}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {error && <p className="text-red-600 mb-3">{error}</p>}
+
+        {/* Bloco com scroll proprio: so as linhas da tabela rolam, cabecalho da tabela fica grudado no topo */}
+        <div className="flex-1 min-h-0 overflow-y-auto bg-white rounded-xl border border-slate-200 shadow-sm">
+          <table className="w-full text-sm">
+            <thead className="bg-slate-50 text-slate-500 text-left">
+              <tr>
+                <th className="px-4 py-3">Cliente</th>
+                <th className="px-4 py-3">Canal</th>
+                <th className="px-4 py-3">Produto</th>
+                <th className="px-4 py-3 text-center">Valor</th>
+                <th className="px-4 py-3">Status</th>
+                <th className="px-4 py-3">Responsável</th>
+                <th className="px-4 py-3">Follow-up</th>
+                <th className="px-4 py-3 text-centr">Ações</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {leads.map((lead) => (
+                <tr
+                  key={lead.id}
+                  className="border-t border-slate-100 hover:bg-slate-50"
+                >
+                  <td className="px-4 py-3">
+                    <Link
+                      href={`/leads/${lead.id}`}
+                      className="font-medium text-slate-800 hover:text-brand-600 hover:underline"
+                    >
+                      {lead.name}
+                    </Link>
+                    <div className="text-xs text-slate-400">
+                      {lead.phone}
+                      {lead.inactive ? " · 💤 inativo" : ""}
+                    </div>
+                  </td>
+                  <td className="px-4 py-3 text-slate-600">
+                    {SOURCE_LABEL[lead.source]}
+                  </td>
+                  <td className="px-4 py-3 text-slate-600">{lead.product}</td>
+                  <td className="px-4 py-3 text-center font-medium">
+                    {formatCurrency(lead.estimatedValue)}
+                  </td>
+                  <td className="px-4 py-3">
+                    <StatusBadge status={lead.status} />
+                  </td>
+                  <td className="px-4 py-3 text-slate-600">
+                    {lead.owner?.name ?? "-"}
+                  </td>
+                  <td
+                    className={`px-4 py-3 ${isOverdue(lead.nextFollowUp) && !["FECHADO", "PERDIDO"].includes(lead.status) ? "text-red-600 font-medium" : "text-slate-600"}`}
+                  >
+                    {formatDate(lead.nextFollowUp)}
+                  </td>
+                  <td className="px-4 py-3 text-left whitespace-nowrap">
+                    <button
+                      onClick={() => {
+                        setEditing(lead);
+                        setShowForm(true);
+                      }}
+                      className="text-brand-600 hover:underline mr-3"
+                    >
+                      Editar
+                    </button>
+                    {role !== "SDR" && (
+                      <button
+                        onClick={() => handleDelete(lead)}
+                        className="text-red-600 hover:underline"
+                      >
+                        Excluir
+                      </button>
+                    )}
+                  </td>
+                </tr>
+              ))}
+              {leads.length === 0 && (
+                <tr>
+                  <td
+                    colSpan={8}
+                    className="px-4 py-10 text-center text-slate-400"
+                  >
+                    Nenhum lead encontrado.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        {showForm && (
+          <LeadForm
+            lead={editing}
+            users={users}
+            onClose={() => setShowForm(false)}
+            onSaved={() => {
+              setShowForm(false);
+              load();
+            }}
+          />
+        )}
+      </div>
     </div>
   );
 }
