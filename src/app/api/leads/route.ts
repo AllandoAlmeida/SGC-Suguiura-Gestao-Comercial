@@ -93,6 +93,8 @@ export async function POST(req: NextRequest) {
     const transition = isValidStatusTransition("NOVO", status);
     if (!transition.ok) throw new ApiError(422, transition.reason!);
 
+    
+
     const lead = await prisma.lead.create({
       data: {
         name: data.name,
@@ -102,7 +104,7 @@ export async function POST(req: NextRequest) {
         estimatedValue: new Prisma.Decimal(data.estimatedValue),
         status,
         ownerId: data.ownerId,
-        nextFollowUp: data.nextFollowUp,
+        nextFollowUp,
         lastContact: data.lastContact ?? null,
         notes: data.notes ?? null,
       },
