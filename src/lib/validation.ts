@@ -6,10 +6,20 @@ export const leadCreateSchema = z.object({
   source: z.enum(["WHATSAPP", "LOJA", "EMAIL", "PROSPECCAO", "POS_VENDA"]),
   product: z.string().min(1, "Produto obrigatorio"),
   estimatedValue: z.coerce.number().min(0, "Valor invalido"),
-  status: z.enum(["NOVO", "QUALIFICADO", "ORCAMENTO", "NEGOCIACAO", "FECHADO", "PERDIDO"]).optional(),
+  status: z
+    .enum([
+      "NOVO",
+      "QUALIFICADO",
+      "ORCAMENTO",
+      "NEGOCIACAO",
+      "FECHADO",
+      "PERDIDO",
+    ])
+    .optional(),
   ownerId: z.string().min(1, "Responsável obrigatório"),
   // Follow-up obrigatorio (regra de negocio): bloqueia salvar sem follow-up.
-  nextFollowUp: z.coerce.date({ required_error: "Proximo follow-up e obrigatorio" }),
+  // Opcional na validacao: se nao vier, o backend aplica D+3 automaticamente (ver defaultFollowUp em domain.ts).
+  nextFollowUp: z.coerce.date().optional(),
   lastContact: z.coerce.date().optional().nullable(),
   notes: z.string().optional().nullable(),
 });
@@ -21,7 +31,14 @@ export const leadUpdateSchema = leadCreateSchema.partial().extend({
 });
 
 export const statusUpdateSchema = z.object({
-  status: z.enum(["NOVO", "QUALIFICADO", "ORCAMENTO", "NEGOCIACAO", "FECHADO", "PERDIDO"]),
+  status: z.enum([
+    "NOVO",
+    "QUALIFICADO",
+    "ORCAMENTO",
+    "NEGOCIACAO",
+    "FECHADO",
+    "PERDIDO",
+  ]),
 });
 
 export const interactionCreateSchema = z.object({

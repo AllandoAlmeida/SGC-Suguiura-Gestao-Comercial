@@ -1,4 +1,5 @@
 import { LeadStatus, Role } from "@prisma/client";
+import { addDays } from "date-fns";
 
 // ----- Configuracao de status / pipeline -----
 
@@ -96,6 +97,13 @@ export function canEditLeadStatus(role: Role, targetStatus: LeadStatus): { ok: b
   }
 
   return { ok: false, reason: "Papel sem permissao." };
+}
+
+/**
+  * automaticamente D+3 (3 dias a partir de agora ou da data base informada).
+ */
+export function defaultFollowUp(base: Date = new Date()): Date {
+  return addDays(base, 3);
 }
 
 /** Indica se o papel pode fechar venda (status FECHADO). */

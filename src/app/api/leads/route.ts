@@ -3,7 +3,7 @@ import { LeadStatus, LeadSource, Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { requireUser, handleError, ApiError, serializeLead } from "@/lib/api";
 import { leadCreateSchema } from "@/lib/validation";
-import { canEditLeadStatus, isValidStatusTransition, inactiveThresholdDays } from "@/lib/domain";
+import { canEditLeadStatus, isValidStatusTransition, inactiveThresholdDays, defaultFollowUp } from "@/lib/domain";
 import { buildLeadWhere } from "@/lib/reportFilters";
 
 // GET /api/leads?status=&ownerId=&source=&from=&to=&search=&overdue=
@@ -79,6 +79,7 @@ export async function POST(req: NextRequest) {
       throw new ApiError(400, parsed.error.errors[0]?.message ?? "Dados invalidos");
     }
     const data = parsed.data;
+    const nextFollowUp = data.nextFollowUp ?? defaultFollowUp();
     const status = data.status ?? "NOVO";
 
     // Regra: papel deve poder definir o status escolhido.

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { requireUser, handleError, ApiError } from "@/lib/api";
-import { SOURCE_LABEL } from "@/lib/domain";
+import { defaultFollowUp, SOURCE_LABEL } from "@/lib/domain";
 import { parseCsvLine, splitCsvLines, parseBrDate, parseBrNumber } from "@/lib/csvParse";
 
 export const dynamic = "force-dynamic";
@@ -56,14 +56,13 @@ export async function POST(req: NextRequest) {
       const product_ = product?.trim();
       const sourceKey = LABEL_TO_SOURCE[sourceLabel?.trim().toLowerCase() ?? ""];
       const estimatedValue = parseBrNumber(valueStr) ?? 0;
-      const nextFollowUp = parseBrDate(nextFollowUpStr);
+      const nextFollowUp = parseBrDate(nextFollowUpStr) ?? defaultFollowUp();
       const lastContact = parseBrDate(lastContactStr);
 
       if (!name_) { errors.push({ row: rowNumber, reason: "Nome em branco" }); continue; }
       if (!phone_) { errors.push({ row: rowNumber, reason: "Telefone em branco" }); continue; }
       if (!sourceKey) { errors.push({ row: rowNumber, reason: `Origem "${sourceLabel}" nao reconhecida` }); continue; }
       if (!product_) { errors.push({ row: rowNumber, reason: "Produto em branco" }); continue; }
-      if (!nextFollowUp) { errors.push({ row: rowNumber, reason: "Proximo follow-up ausente ou em formato invalido (esperado dd/mm/aaaa)" }); continue; }
 
       try {
         await prisma.$transaction(async (tx) => {
