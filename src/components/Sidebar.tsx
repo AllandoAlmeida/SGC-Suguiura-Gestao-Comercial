@@ -7,8 +7,8 @@ import { ROLE_LABEL } from "@/lib/domain";
 
 const NAV = [
   { href: "/", label: "Dashboard", icon: "📊" },
-  { href: "/pipeline", label: "Pipeline (Kanban)", icon: "🗂️" },
   { href: "/leads", label: "Leads", icon: "👥" },
+  { href: "/pipeline", label: "Pipeline (Kanban)", icon: "🗂️" },
   { href: "/followups", label: "Follow-ups", icon: "⏰" },
 ];
 
@@ -18,10 +18,10 @@ export default function Sidebar() {
   const role = session?.user?.role;
 
   return (
-    <aside className="w-64 shrink-0 bg-slate-900 text-slate-200 flex flex-col min-h-screen">
+    <aside className="w-64 shrink-0 bg-slate-900 text-slate-200 flex flex-col h-screen">
       <div className="p-5 border-b border-slate-800">
         <h1 className="text-xl font-bold text-white">SGC</h1>
-        <p className="text-xs text-slate-400">Suguiura Gestao Comercial</p>
+        <p className="text-xs text-slate-400">Suguiura Gestão Comercial</p>
       </div>
 
       <nav className="flex-1 p-3 space-y-1">

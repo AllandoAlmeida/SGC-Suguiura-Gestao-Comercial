@@ -236,18 +236,20 @@ export default function LeadsPage() {
 
       <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-x-auto">
         <table className="w-full text-sm">
-          <thead className="bg-slate-50 text-slate-500 text-left">
-            <tr>
-              <th className="px-4 py-3">Cliente</th>
-              <th className="px-4 py-3">Canal</th>
-              <th className="px-4 py-3">Produto</th>
-              <th className="px-4 py-3 text-center">Valor</th>
-              <th className="px-4 py-3">Status</th>
-              <th className="px-4 py-3">Responsável</th>
-              <th className="px-4 py-3">Follow-up</th>
-              <th className="px-4 py-3 text-centr">Ações</th>
-            </tr>
-          </thead>
+          <div className="sticky top-0 z-10">
+            <thead className="bg-slate-50 text-slate-500 text-left">
+              <tr>
+                <th className="px-4 py-3">Cliente</th>
+                <th className="px-4 py-3">Canal</th>
+                <th className="px-4 py-3">Produto</th>
+                <th className="px-4 py-3 text-center">Valor</th>
+                <th className="px-4 py-3">Status</th>
+                <th className="px-4 py-3">Responsável</th>
+                <th className="px-4 py-3">Follow-up</th>
+                <th className="px-4 py-3 text-centr">Ações</th>
+              </tr>
+            </thead>
+          </div>
           <tbody>
             {leads.map((lead) => (
               <tr
