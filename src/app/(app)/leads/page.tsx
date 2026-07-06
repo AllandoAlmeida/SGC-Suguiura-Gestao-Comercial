@@ -234,7 +234,7 @@ export default function LeadsPage() {
 
       {error && <p className="text-red-600 mb-3">{error}</p>}
 
-      <div className="bg-white rounded-xl border border-slate-200 shadow-sm">
+      <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-x-auto">
         <table className="w-full text-sm">
           <thead className="bg-slate-50 text-slate-500 text-left">
             <tr>
@@ -248,77 +248,74 @@ export default function LeadsPage() {
               <th className="px-4 py-3 text-centr">Ações</th>
             </tr>
           </thead>
-
-          <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-x-auto">
-            <tbody>
-              {leads.map((lead) => (
-                <tr
-                  key={lead.id}
-                  className="border-t border-slate-100 hover:bg-slate-50"
+          <tbody>
+            {leads.map((lead) => (
+              <tr
+                key={lead.id}
+                className="border-t border-slate-100 hover:bg-slate-50"
+              >
+                <td className="px-4 py-3">
+                  <Link
+                    href={`/leads/${lead.id}`}
+                    className="font-medium text-slate-800 hover:text-brand-600 hover:underline"
+                  >
+                    {lead.name}
+                  </Link>
+                  <div className="text-xs text-slate-400">
+                    {lead.phone}
+                    {lead.inactive ? " · 💤 inativo" : ""}
+                  </div>
+                </td>
+                <td className="px-4 py-3 text-slate-600">
+                  {SOURCE_LABEL[lead.source]}
+                </td>
+                <td className="px-4 py-3 text-slate-600">{lead.product}</td>
+                <td className="px-4 py-3 text-center font-medium">
+                  {formatCurrency(lead.estimatedValue)}
+                </td>
+                <td className="px-4 py-3">
+                  <StatusBadge status={lead.status} />
+                </td>
+                <td className="px-4 py-3 text-slate-600">
+                  {lead.owner?.name ?? "-"}
+                </td>
+                <td
+                  className={`px-4 py-3 ${isOverdue(lead.nextFollowUp) && !["FECHADO", "PERDIDO"].includes(lead.status) ? "text-red-600 font-medium" : "text-slate-600"}`}
                 >
-                  <td className="px-4 py-3">
-                    <Link
-                      href={`/leads/${lead.id}`}
-                      className="font-medium text-slate-800 hover:text-brand-600 hover:underline"
-                    >
-                      {lead.name}
-                    </Link>
-                    <div className="text-xs text-slate-400">
-                      {lead.phone}
-                      {lead.inactive ? " · 💤 inativo" : ""}
-                    </div>
-                  </td>
-                  <td className="px-4 py-3 text-slate-600">
-                    {SOURCE_LABEL[lead.source]}
-                  </td>
-                  <td className="px-4 py-3 text-slate-600">{lead.product}</td>
-                  <td className="px-4 py-3 text-center font-medium">
-                    {formatCurrency(lead.estimatedValue)}
-                  </td>
-                  <td className="px-4 py-3">
-                    <StatusBadge status={lead.status} />
-                  </td>
-                  <td className="px-4 py-3 text-slate-600">
-                    {lead.owner?.name ?? "-"}
-                  </td>
-                  <td
-                    className={`px-4 py-3 ${isOverdue(lead.nextFollowUp) && !["FECHADO", "PERDIDO"].includes(lead.status) ? "text-red-600 font-medium" : "text-slate-600"}`}
+                  {formatDate(lead.nextFollowUp)}
+                </td>
+                <td className="px-4 py-3 text-left whitespace-nowrap">
+                  <button
+                    onClick={() => {
+                      setEditing(lead);
+                      setShowForm(true);
+                    }}
+                    className="text-brand-600 hover:underline mr-3"
                   >
-                    {formatDate(lead.nextFollowUp)}
-                  </td>
-                  <td className="px-4 py-3 text-left whitespace-nowrap">
+                    Editar
+                  </button>
+                  {role !== "SDR" && (
                     <button
-                      onClick={() => {
-                        setEditing(lead);
-                        setShowForm(true);
-                      }}
-                      className="text-brand-600 hover:underline mr-3"
+                      onClick={() => handleDelete(lead)}
+                      className="text-red-600 hover:underline"
                     >
-                      Editar
+                      Excluir
                     </button>
-                    {role !== "SDR" && (
-                      <button
-                        onClick={() => handleDelete(lead)}
-                        className="text-red-600 hover:underline"
-                      >
-                        Excluir
-                      </button>
-                    )}
-                  </td>
-                </tr>
-              ))}
-              {leads.length === 0 && (
-                <tr>
-                  <td
-                    colSpan={8}
-                    className="px-4 py-10 text-center text-slate-400"
-                  >
-                    Nenhum lead encontrado.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </div>
+                  )}
+                </td>
+              </tr>
+            ))}
+            {leads.length === 0 && (
+              <tr>
+                <td
+                  colSpan={8}
+                  className="px-4 py-10 text-center text-slate-400"
+                >
+                  Nenhum lead encontrado.
+                </td>
+              </tr>
+            )}
+          </tbody>
         </table>
       </div>
 
