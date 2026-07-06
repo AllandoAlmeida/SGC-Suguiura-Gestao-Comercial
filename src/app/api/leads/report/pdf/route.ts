@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import PDFDocument from "pdfkit";
+import PDFDocument from "pdfkit/js/pdfkit.standalone";
 import { prisma } from "@/lib/prisma";
 import { requireUser, handleError } from "@/lib/api";
 import { buildLeadWhere } from "@/lib/reportFilters";
@@ -23,7 +23,7 @@ export async function GET(req: NextRequest) {
 
     const doc = new PDFDocument({ size: "A4", margin: 40 });
     const chunks: Buffer[] = [];
-    doc.on("data", (chunk) => chunks.push(chunk as Buffer));
+    doc.on("data", (chunk: Buffer) => chunks.push(chunk as Buffer));
     const finished = new Promise<Buffer>((resolve) => {
       doc.on("end", () => resolve(Buffer.concat(chunks)));
     });
