@@ -18,7 +18,7 @@ export default function DashboardPage() {
   }, []);
 
   return (
-    <div className="p-6 lg:p-8">
+    <div className="p-6 lg:p-8 overflow-hidden">
       <PageHeader title="Dashboard Comercial" subtitle="Visao geral do funil de vendas e da equipe" />
 
       {error && <p className="text-red-600">{error}</p>}

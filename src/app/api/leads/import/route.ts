@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { requireUser, handleError, ApiError } from "@/lib/api";
 import { defaultFollowUp, SOURCE_LABEL } from "@/lib/domain";
 import { parseCsvLine, splitCsvLines, parseBrDate, parseBrNumber } from "@/lib/csvParse";
+import { findOrCreateCustomer } from "@/lib/customer";
 
 export const dynamic = "force-dynamic";
 
@@ -50,9 +51,10 @@ export async function POST(req: NextRequest) {
       // Mesma ordem de colunas do export: Nome;Telefone;Origem;Produto;Valor estimado;
       // Status;Atendente;Data de entrada;Ultimo contato;Proximo follow-up;Observacoes
       const [name, phone, sourceLabel, product, valueStr, , , , lastContactStr, nextFollowUpStr, notes] = cols;
-
+      
       const name_ = name?.trim();
       const phone_ = phone?.trim();
+      const customer = await findOrCreateCustomer(name_, phone_);
       const product_ = product?.trim();
       const sourceKey = LABEL_TO_SOURCE[sourceLabel?.trim().toLowerCase() ?? ""];
       const estimatedValue = parseBrNumber(valueStr) ?? 0;
@@ -69,7 +71,8 @@ export async function POST(req: NextRequest) {
           const lead = await tx.lead.create({
             data: {
               name: name_,
-              phone: phone_,
+              phone: customer.phone,
+              customerId: customer.id,
               source: sourceKey as never,
               product: product_,
               estimatedValue: new Prisma.Decimal(estimatedValue),

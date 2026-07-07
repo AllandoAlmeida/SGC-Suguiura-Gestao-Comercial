@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { LeadStatus, LeadSource, Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
+import { findOrCreateCustomer } from "@/lib/customer";
 import { requireUser, handleError, ApiError, serializeLead } from "@/lib/api";
 import { leadCreateSchema } from "@/lib/validation";
 import { canEditLeadStatus, isValidStatusTransition, inactiveThresholdDays, defaultFollowUp } from "@/lib/domain";
@@ -93,12 +94,14 @@ export async function POST(req: NextRequest) {
     const transition = isValidStatusTransition("NOVO", status);
     if (!transition.ok) throw new ApiError(422, transition.reason!);
 
-    
+
+    const customer = await findOrCreateCustomer(data.name, data.phone);    
 
     const lead = await prisma.lead.create({
       data: {
         name: data.name,
-        phone: data.phone,
+        phone: customer.phone, // ja normalizado: +55(11) 999999999
+        customerId: customer.id,
         source: data.source,
         product: data.product,
         estimatedValue: new Prisma.Decimal(data.estimatedValue),

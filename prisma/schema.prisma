@@ -54,6 +54,14 @@ model User {
   interactions Interaction[]
 }
 
+model Customer {
+  id        String   @id @default(cuid())
+  phone     String   @unique
+  name      String
+  createdAt DateTime @default(now())
+  leads     Lead[]
+}
+
 model Lead {
   id             String     @id @default(cuid())
   name           String
@@ -70,6 +78,9 @@ model Lead {
   lastContact    DateTime?
   nextFollowUp   DateTime // follow-up obrigatorio (regra de negocio)
   notes          String?
+
+  customerId String?
+  customer   Customer? @relation(fields: [customerId], references: [id])
 
   inactive       Boolean    @default(false)
 
