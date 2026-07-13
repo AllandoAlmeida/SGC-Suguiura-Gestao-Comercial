@@ -102,9 +102,9 @@ model Interaction {
   user      User            @relation(fields: [userId], references: [id])
   type      InteractionType
   content   String
-  // Para MUDANCA_STATUS: registra de->para
   fromStatus LeadStatus?
   toStatus   LeadStatus?
+  externalId String? @unique // id da mensagem do WhatsApp, evita duplicar em reenvio
   createdAt DateTime        @default(now())
 
   @@index([leadId])
